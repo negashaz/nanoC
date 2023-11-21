@@ -1521,28 +1521,28 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 25 "parser.y"
-    {printf("primary-expression \n");;}
+    {printf("primary-expression\n");;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
 #line 26 "parser.y"
-    {printf("primary-expression \n");;}
+    {printf("primary-expression\n");;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
 #line 27 "parser.y"
-    {printf("primary-expression \n");;}
+    {printf("primary-expression\n");;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
 #line 28 "parser.y"
-    {printf("primary-expression \n");;}
+    {printf("primary-expression\n");;}
     break;
 
   case 6:
