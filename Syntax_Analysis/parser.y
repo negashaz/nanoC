@@ -3,6 +3,7 @@
 	#include <stdio.h>
 
 	extern int yylex();
+    extern int yytext();
 	void yyerror(char *s);
 %}
 
@@ -11,30 +12,32 @@ int intval;
 }
 
 %token CHARTYPE ELSE FOR IF INTTYPE RETURN VOIDTYPE
-%token IDENTIFIER INTEGER_CONSTANT CHARACTER_CONSTANT STRING_LITERAL
+%token IDENTIFIER INTEGER_CONSTANT CHARACTER_CONSTANT STRING_LITERAL CONSTANT
 %token LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET LEFT_PARENTHESIS RIGHT_PARENTHESIS
 %token ARROW BITWISE_AND ASTERISK PLUS MINUS DIVIDE MODULO EXCLAMATION QUESTION_MARK LESS_THAN GREATER_THAN 
 %token LESS_THAN_OR_EQUAL GREATER_THAN_OR_EQUAL EQUAL NOT_EQUAL LOGICAL_AND LOGICAL_OR ASSIGNMENT COLON SEMICOLON COMMA
 
+%start translation_unit
 %%
 
+// ----------------- Expressions -----------------
 primary_expression
-    : IDENTIFIER {printf("primary-expression \n");}
-    | constant {printf("primary-expression \n");}
-    | STRING_LITERAL {printf("primary-expression \n");}
-    | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS {printf("primary-expression \n");}
-    ;
-
-constant
-    : INTEGER_CONSTANT
-    | CHARACTER_CONSTANT
+    : IDENTIFIER {printf("primary-expression\n");}
+    | CONSTANT {printf("primary-expression\n");}
+    | STRING_LITERAL {printf("primary-expression\n");}
+    | LEFT_PARENTHESIS expression RIGHT_PARENTHESIS {printf("primary-expression\n");}
     ;
 
 postfix_expression
     : primary_expression {printf("postfix-expression\n");}
     | postfix_expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET {printf("postfix-expression\n");}
-    | postfix_expression LEFT_PARENTHESIS argument_expression_list RIGHT_PARENTHESIS {printf("postfix-expression\n");}
+    | postfix_expression LEFT_PARENTHESIS argument_expression_list_opt RIGHT_PARENTHESIS {printf("postfix-expression\n");}
     | postfix_expression ARROW IDENTIFIER {printf("postfix-expression\n");}
+    ;
+
+argument_expression_list_opt
+    : argument_expression_list
+    |
     ;
 
 argument_expression_list
@@ -106,6 +109,7 @@ expression
     : assignment_expression {printf("expression\n");}
     ;
 
+//------------- Declarations ----------------
 declaration
     : type_specifier init_declarator SEMICOLON {printf("declaration\n");}
     ;
@@ -149,12 +153,10 @@ pointer
     : ASTERISK {printf("pointer\n");}
     ;
 
-
 parameter_list
     : parameter_declaration {printf("parameter-list\n");}
     | parameter_list COMMA parameter_declaration {printf("parameter-list\n");}
     ;
-
 
 parameter_declaration
     : type_specifier pointer_opt identifier_opt {printf("parameter-declaration\n");}
@@ -169,18 +171,24 @@ initializer
     : assignment_expression{printf("initializer\n");}
     ;
 
+// ----------------- Statements -----------------
 statement
     : compound_statement {printf("statement\n");}
     | expression_statement {printf("statement\n");}
-    | selection_statement{printf("statement\n");}
+    | selection_statement {printf("statement\n");}
     | iteration_statement {printf("statement\n");}
     | jump_statement {printf("statement\n");}
     ;
 
 compound_statement
-    : LEFT_CURLY_BRACKET block_item_list RIGHT_CURLY_BRACKET{printf("compound-statement\n");}
+    : LEFT_CURLY_BRACKET block_item_list_opt RIGHT_CURLY_BRACKET{printf("compound-statement\n");}
     ;
-    
+
+block_item_list_opt
+    : block_item_list
+    |
+    ;
+
 block_item_list
     : block_item {printf("block-item_list\n");}
     | block_item_list block_item {printf("block-item_list\n");}
@@ -213,6 +221,7 @@ jump_statement
     : RETURN expression_opt SEMICOLON {printf("jump-statement\n");}
     ;
 
+// ----------------- Translation Unit -----------------
 translation_unit
     : external_declaration {printf("translation-unit\n");}
     | translation_unit external_declaration {printf("translation-unit\n");}
@@ -230,5 +239,5 @@ function_definition
 %%
 
 void yyerror(char *s) {
-	printf("The error is: %s\n", s);
+	printf("Error: %s on '%s'\n", s, yytext);
 }

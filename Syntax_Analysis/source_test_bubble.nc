@@ -4,6 +4,8 @@ void readArray(int size);
 void printArray(int size);
 void bubbleSort(int n);
 int arr[20]; // Global array
+
+
 // Driver program to test above functions
 int main() {
     int n;
